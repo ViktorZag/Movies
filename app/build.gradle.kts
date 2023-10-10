@@ -75,6 +75,7 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     implementation(libs.material3.window.size)
+    implementation(libs.compose.icons.extended)
     //Coroutines
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
@@ -102,4 +103,5 @@ dependencies {
     //Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.gms.play.services.auth)
 }

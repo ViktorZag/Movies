@@ -1,3 +1,44 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Movies</string>
+    <string name="web_client_id" tools:ignore="TypographyDashes">26975510557-44nnqsam685qk1uoi66t2kailminimqj.apps.googleusercontent.com</string>
+    <string name="invalid_email_msg">Invalid email</string>
+    <string name="invalid_password_msg">Password must contain minimum 8 symbols</string>
+    <string name="wrong_password_msg">Wrong password</string>
+    <string name="user_not_exist_msg">User doesn\'t exist</string>
+    <string name="unknown_err_msg">Unknown error, try again later</string>
+    <string name="internet_connection_err_msg">Please check your internet connection or try again later</string>
+    <string name="user_already_exist_msg">This email already registered</string>
+
+    <string name="navigate_back">Navigate to the previous screen</string>
+
+    <!--Login-->
+    <string name="login_heading_text">Login</string>
+    <string name="login_email">Email</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_button_text">Login</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="icon_password_visible">Password Visible</string>
+    <string name="icon_password_hidden">Password Hidden</string>
+
+    <!--Login Error Messages-->
+    <string name="login_error_msg_empty_email_mobile">Please enter your email or mobile number</string>
+    <string name="login_error_msg_empty_password">Please enter your password</string>
+
+    <!--Login Page - Register Section-->
+    <string name="do_not_have_account">Don\'t have an account?</string>
+    <string name="already_registered">Already registered?</string>
+    <string name="register">Register</string>
+    <string name="log_in">Log in</string>
+
+    <!--Registration-->
+    <string name="registration_heading_text">Registration</string>
+    <string name="registration_email_label">Email ID</string>
+    <string name="registration_mobile_label">Mobile Number</string>
+    <string name="registration_password_label">Password</string>
+    <string name="registration_confirm_password_label">Confirm Password</string>
+    <string name="registration_button_text">Register</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="movies">Movies</string>
+    <string name="or">or</string>
+
 </resources>

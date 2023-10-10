@@ -9,6 +9,7 @@ lifecycle-runtime-ktx = "2.6.2"
 ksp = "1.8.21-1.0.11"
 activity-compose = "1.8.0"
 compose-bom = "2023.09.02"
+compose-icons-extended = "1.5.3"
 compose-navigation = "2.7.4"
 firebase-auth_version = "22.1.2"
 coil_version = "2.4.0"
@@ -25,6 +26,7 @@ firebase-bom_version = "32.3.1"
 room_version = "2.5.2"
 coroutines_version = "1.7.1"
 coroutines-lifecycle_version = "2.6.2"
+play-services-auth_version = "20.7.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -35,6 +37,7 @@ lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtim
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "compose-navigation" }
+compose-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose-icons-extended" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -52,8 +55,9 @@ coroutines-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecyc
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom_version" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebase-auth_version" }
 firebase-analitics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+gms-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth_version" }
 #Coil
-coil = { group = "io.coil-kt", name = "coil", version.ref = "coil_version" }
+coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil_version" }
 #Retrofit
 retrofit_core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit_version" }
 retrofit_converter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit_version" }
@@ -75,7 +79,7 @@ serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serializ
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
-com-android-library = {id = "com.android.library", version.ref = "agp" }
+com-android-library = { id = "com.android.library", version.ref = "agp" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }
 google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt_version" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "plugin-serialization_version" }
