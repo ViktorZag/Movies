@@ -2,9 +2,10 @@
     <string name="app_name">Movies</string>
     <string name="web_client_id" tools:ignore="TypographyDashes">26975510557-44nnqsam685qk1uoi66t2kailminimqj.apps.googleusercontent.com</string>
     <string name="invalid_email_msg">Invalid email</string>
-    <string name="invalid_password_msg">Password must contain minimum 8 symbols</string>
+    <string name="invalid_password_msg">Invalid password</string>
+    <string name="passwords_not_match_msg">Passwords don\'t match</string>
     <string name="wrong_password_msg">Wrong password</string>
-    <string name="user_not_exist_msg">User doesn\'t exist</string>
+    <string name="user_not_exist_msg">Wrong credentials</string>
     <string name="unknown_err_msg">Unknown error, try again later</string>
     <string name="internet_connection_err_msg">Please check your internet connection or try again later</string>
     <string name="user_already_exist_msg">This email already registered</string>

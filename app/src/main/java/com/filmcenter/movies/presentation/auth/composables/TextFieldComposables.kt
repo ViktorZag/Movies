@@ -75,7 +75,7 @@ fun PasswordTextField(
         enabled = enabled,
         isError = error != null,
         supportingText = {
-            if (error == AuthError.InvalidPassword || error == AuthError.WrongPassword) {
+            if (error == AuthError.InvalidPassword) {
                 ErrorTextInputField(text = stringResource(id = error.message))
             }
         }

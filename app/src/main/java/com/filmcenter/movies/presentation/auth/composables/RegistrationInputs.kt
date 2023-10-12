@@ -9,22 +9,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import com.filmcenter.movies.R
 import com.filmcenter.movies.presentation.auth.model.RegisterUiState
-import com.filmcenter.movies.presentation.theme.AppTheme
+import com.filmcenter.movies.presentation.theme.MoviesTheme
 
 @Composable
 fun RegistrationInputs(
+    modifier: Modifier,
     registrUiState: RegisterUiState,
     onUserInputChange: (String, String, String) -> Unit,
     onSubmit: () -> Unit,
 ) {
     // Login Inputs Section
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
 
         // Email
         EmailTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = AppTheme.dimens.paddingLarge),
+                .padding(top = MoviesTheme.dimens.paddingNormal),
             value = registrUiState.email,
             onValueChange = { email ->
                 onUserInputChange(email, registrUiState.password, registrUiState.confirmPassword)
@@ -37,7 +38,7 @@ fun RegistrationInputs(
         PasswordTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = AppTheme.dimens.paddingLarge),
+                .padding(top = MoviesTheme.dimens.paddingSmall),
             value = registrUiState.password,
             onValueChange = { password ->
                 onUserInputChange(registrUiState.email, password, registrUiState.confirmPassword)
@@ -52,8 +53,8 @@ fun RegistrationInputs(
         PasswordTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = AppTheme.dimens.paddingLarge),
-            value = registrUiState.password,
+                .padding(top = MoviesTheme.dimens.paddingSmall),
+            value = registrUiState.confirmPassword,
             onValueChange = { confirmPassword ->
                 onUserInputChange(registrUiState.email, registrUiState.password, confirmPassword)
             },
@@ -64,7 +65,7 @@ fun RegistrationInputs(
 
         // Registration Submit Button
         NormalButton(
-            modifier = Modifier.padding(top = AppTheme.dimens.paddingExtraLarge),
+            modifier = Modifier.padding(top = MoviesTheme.dimens.paddingExtraLarge),
             text = stringResource(id = R.string.registration_button_text),
             enabled = !registrUiState.isLoading,
             onClick = onSubmit

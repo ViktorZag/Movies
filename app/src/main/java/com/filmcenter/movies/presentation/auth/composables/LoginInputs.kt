@@ -13,10 +13,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.filmcenter.movies.R
 import com.filmcenter.movies.presentation.auth.model.LoginUiState
-import com.filmcenter.movies.presentation.theme.AppTheme
+import com.filmcenter.movies.presentation.theme.MoviesTheme
 
 @Composable
 fun LoginInputs(
+    modifier: Modifier = Modifier,
     loginState: LoginUiState,
     onUserInputChange: (String, String) -> Unit,
     onSubmit: () -> Unit,
@@ -24,13 +25,12 @@ fun LoginInputs(
 ) {
 
     // Login Inputs Section
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
 
         // Email
         EmailTextField(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = AppTheme.dimens.paddingLarge),
+                .fillMaxWidth(),
             value = loginState.email,
             onValueChange = { email ->
                 onUserInputChange(email, loginState.password)
@@ -45,7 +45,7 @@ fun LoginInputs(
         PasswordTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = AppTheme.dimens.paddingLarge),
+                .padding(top = MoviesTheme.dimens.paddingSmall),
             value = loginState.password,
             onValueChange = { password ->
                 onUserInputChange(loginState.email, password)
@@ -58,20 +58,19 @@ fun LoginInputs(
         // Forgot Password
         Text(
             modifier = Modifier
-                .padding(top = AppTheme.dimens.paddingSmall)
                 .align(alignment = Alignment.End)
                 .clickable {
                     onForgotPasswordClick.invoke()
                 },
             text = stringResource(id = R.string.forgot_password),
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.End,
             style = MaterialTheme.typography.bodyMedium
         )
 
         // Login Submit Button
         NormalButton(
-            modifier = Modifier.padding(top = AppTheme.dimens.paddingLarge),
+            modifier = Modifier.padding(top = MoviesTheme.dimens.paddingNormal),
             text = stringResource(id = R.string.login_button_text),
             enabled = !loginState.isLoading,
             onClick = onSubmit

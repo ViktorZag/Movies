@@ -1,56 +1,55 @@
 package com.filmcenter.movies.presentation.auth
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.filmcenter.movies.R
-import com.filmcenter.movies.presentation.auth.composables.DividerTextComponent
+import com.filmcenter.movies.presentation.auth.composables.ProgressIndicator
 import com.filmcenter.movies.presentation.auth.composables.RegistrationInputs
-import com.filmcenter.movies.presentation.auth.composables.SignInButton
 import com.filmcenter.movies.presentation.auth.composables.TitleText
-import com.filmcenter.movies.presentation.theme.AppTheme
+import com.filmcenter.movies.presentation.auth.model.AuthError
 import com.filmcenter.movies.presentation.theme.MoviesTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun RegistrationScreen(
-    registerViewModel: RegisterViewModel = hiltViewModel(),
+    viewModel: RegisterViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToAuthenticatedRoute: () -> Unit
 ) {
 
-    val registrationState = remember {
-        registerViewModel.uiState
-    }
+    val uiState = viewModel.uiState
 
-    if (registrationState.isRegistrationSuccessful) {
-        LaunchedEffect(key1 = true) {
-            onNavigateToAuthenticatedRoute.invoke()
-        }
-    } else {
-        // Full Screen Content
+    Box(
+        modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface),
+        contentAlignment = Alignment.Center
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -63,64 +62,101 @@ fun RegistrationScreen(
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(AppTheme.dimens.paddingLarge)
-                    .padding(top = AppTheme.dimens.paddingExtraLarge)
+                    .padding(MoviesTheme.dimens.paddingLarge)
+                    .padding(top = MoviesTheme.dimens.paddingExtraLarge)
             ) {
 
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = AppTheme.dimens.paddingLarge)
-                        .padding(bottom = AppTheme.dimens.paddingExtraLarge)
+                        .padding(horizontal = MoviesTheme.dimens.paddingLarge)
+                        .padding(bottom = MoviesTheme.dimens.paddingExtraLarge)
                 ) {
-
-                    // Heading Registration
                     TitleText(
-                        modifier = Modifier.padding(top = AppTheme.dimens.paddingLarge),
+                        modifier = Modifier.padding(top = MoviesTheme.dimens.paddingLarge),
                         text = stringResource(id = R.string.registration_heading_text)
                     )
-
-                    /**
-                     * Registration Inputs Composable
-                     */
                     RegistrationInputs(
-                        registrUiState = registrationState,
-                        onUserInputChange = registerViewModel::updateUiState,
+                        modifier = Modifier.padding(top = MoviesTheme.dimens.paddingLarge),
+                        registrUiState = uiState,
+                        onUserInputChange = viewModel::updateUiState,
                         onSubmit = {
-
+                            viewModel.registerUser()
                         }
                     )
                 }
             }
             Row(
-                modifier = Modifier.padding(AppTheme.dimens.paddingNormal),
+                modifier = Modifier.padding(MoviesTheme.dimens.paddingNormal),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Don't have an account?
-                Text(text = stringResource(id = R.string.already_registered))
+                Text(text = stringResource(id = R.string.already_registered),
+                    color = MaterialTheme.colorScheme.onSurface)
 
                 //Register
                 Text(
                     modifier = Modifier
-                        .padding(start = AppTheme.dimens.paddingExtraSmall)
+                        .padding(start = MoviesTheme.dimens.paddingExtraSmall)
                         .clickable {
-                            //onNavigateToRegistration.invoke()
+                            onNavigateBack.invoke()
                         },
                     text = stringResource(id = R.string.log_in),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            DividerTextComponent(modifier = Modifier.padding(horizontal = AppTheme.dimens.paddingLarge))
-            Spacer(modifier = Modifier.height(AppTheme.dimens.paddingSmall))
-            SignInButton(
-                modifier = Modifier
-                    .height(AppTheme.dimens.normalButtonSize)
-                    .width(AppTheme.dimens.normalButtonSize),
-                icon = painterResource(id = R.drawable.ic_google_logo),
-                onClick = {})
         }
+        val snackbarHostState = remember { SnackbarHostState() }
+        SnackbarHost(
+            modifier = Modifier.align(Alignment.TopCenter),
+            hostState = snackbarHostState,
+            snackbar = {
+                Snackbar(
+                    modifier = Modifier.padding(16.dp),
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    content = {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = when {
+                                    uiState.isRegistrationSuccessful -> "Registration Successful"
+                                    uiState.errorState != null -> stringResource(id = uiState.errorState.message)
+                                    else -> ""
+                                }
+                            )
+                        }
+                    }
+                )
+            }
+        )
+        LaunchedEffect(uiState.errorState) {
+            if (
+                uiState.errorState == AuthError.WrongCredentials ||
+                uiState.errorState == AuthError.UserAlreadyExist ||
+                uiState.errorState == AuthError.InternetConnectionErr ||
+                uiState.errorState == AuthError.UnknownError
+            ) {
+                snackbarHostState.showSnackbar(
+                    "Error message",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+        LaunchedEffect(uiState.isRegistrationSuccessful) {
+            if (uiState.isRegistrationSuccessful) {
+                snackbarHostState.showSnackbar(
+                    "Registered successfuly",
+                    duration = SnackbarDuration.Short
+                )
+                delay(300)
+                onNavigateToAuthenticatedRoute.invoke()
+            }
+        }
+        ProgressIndicator(isShown = uiState.isLoading)
     }
-
 }
 
 @Preview(showBackground = true)

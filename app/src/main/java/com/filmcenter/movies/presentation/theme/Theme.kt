@@ -131,7 +131,7 @@ fun MoviesTheme(
     }
 }
 
-object AppTheme {
+object MoviesTheme {
     val dimens: Dimensions
         @Composable
         get() = LocalAppDimens.current

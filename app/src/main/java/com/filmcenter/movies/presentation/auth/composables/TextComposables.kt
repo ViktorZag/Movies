@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.filmcenter.movies.R
-import com.filmcenter.movies.presentation.theme.AppTheme
+import com.filmcenter.movies.presentation.theme.MoviesTheme
 
 @Composable
 fun DividerTextComponent(modifier: Modifier = Modifier) {
@@ -28,8 +28,9 @@ fun DividerTextComponent(modifier: Modifier = Modifier) {
         )
         Text(
             text = stringResource(R.string.or),
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(AppTheme.dimens.paddingSmall)
+            modifier = Modifier.padding(MoviesTheme.dimens.paddingSmall)
         )
         Divider(
             modifier = Modifier.fillMaxWidth().weight(1f),

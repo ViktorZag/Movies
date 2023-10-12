@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.google.dagger.hilt.android)
     alias(libs.plugins.ksp)
+    kotlin("kapt")
 }
 
 android {
@@ -51,10 +52,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
-    namespace = "com.filmcenter.movies"
 }
 
 dependencies {
@@ -76,6 +75,7 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
     implementation(libs.material3.window.size)
     implementation(libs.compose.icons.extended)
+    implementation(libs.compose.navigation)
     //Coroutines
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
@@ -84,7 +84,7 @@ dependencies {
     //Di
     implementation(libs.hilt.android)
     implementation(libs.hilt.compose)
-    ksp(libs.hilt.compiler)
+    kapt(libs.hilt.compiler)
     //Room
     implementation(libs.room.core)
     implementation(libs.room.ktx)

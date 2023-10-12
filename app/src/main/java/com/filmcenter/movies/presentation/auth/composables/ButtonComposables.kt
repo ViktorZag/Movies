@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import com.filmcenter.movies.presentation.theme.AppTheme
+import com.filmcenter.movies.presentation.theme.MoviesTheme
 
 @Composable
 fun NormalButton(
@@ -31,10 +34,18 @@ fun NormalButton(
     enabled: Boolean,
     onClick: () -> Unit
 ) {
-    Button(
+    OutlinedButton(
         modifier = modifier
-            .height(AppTheme.dimens.normalButtonSize)
-            .requiredWidth(AppTheme.dimens.minButtonWidth),
+            .height(MoviesTheme.dimens.normalButtonSize)
+            .requiredWidth(MoviesTheme.dimens.minButtonWidth),
+        border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.onTertiary),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 4.dp
+        ),
         onClick = onClick,
         enabled = enabled
     ) {
@@ -48,7 +59,7 @@ fun SignInButton(
     icon: Painter,
     isLoading: Boolean = false,
     shape: Shape = MaterialTheme.shapes.medium,
-    borderColor: Color = Color.LightGray,
+    borderColor: Color = MaterialTheme.colorScheme.outline,
     backgroundColor: Color = Color.Transparent,
     onClick: () -> Unit
 ) {
