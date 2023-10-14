@@ -93,7 +93,9 @@ dependencies {
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter)
     implementation(libs.okhttp)
-    implementation(libs.retrofit.gson)
+    implementation(libs.moshi)
+    ksp(libs.moshi.codegen)
+    implementation(libs.okhttp.login.interceptor)
     //Serialization
     implementation(libs.serialization.json)
     //Datastore

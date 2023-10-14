@@ -5,9 +5,10 @@ import android.content.IntentSender
 import android.util.Log
 import com.filmcenter.movies.data.auth.AuthResult.Success
 import com.filmcenter.movies.data.auth.AuthResult.Failure
-import com.filmcenter.movies.presentation.gallery.model.User
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
@@ -32,20 +33,21 @@ class AuthRepositoryImpl @Inject constructor(
 
     override val isUserAuthenticated: Boolean = auth.currentUser != null
 
-    override suspend fun oneTapSignInWithGoogle(): IntentSender? {
+    override suspend fun oneTapSignInWithGoogle(): AuthResult<IntentSender?> {
         return try {
             val signInResult = oneTapClient.beginSignIn(signInRequest).await()
-            signInResult.pendingIntent.intentSender
-        } catch (e: Exception) {
-            Log.d("tag", "Exception $e")
-            try {
-                val signUpResult = oneTapClient.beginSignIn(signInRequest).await()
-                signUpResult.pendingIntent.intentSender
-            } catch (e: Exception) {
-                e.printStackTrace()
-                if(e is CancellationException) throw e
-                null
+            Success(signInResult.pendingIntent.intentSender)
+        } catch (e: ApiException) {
+            Log.e(TAG, "oneTapSignInWithGoogle", e)
+            when (e.statusCode) {
+                CommonStatusCodes.CANCELED -> Failure(AuthErrors.ONE_TAP_SIGNIN_DECLINED_ERROR)
+                CommonStatusCodes.NETWORK_ERROR -> Failure(AuthErrors.NETWORK_ERROR)
+                else -> Failure(AuthErrors.UNKNOWN_ERROR)
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception on oneTapSignInWithGoogle", e)
+            if (e is CancellationException) throw e
+            Failure(AuthErrors.UNKNOWN_ERROR)
         }
     }
 
@@ -58,7 +60,7 @@ class AuthRepositoryImpl @Inject constructor(
             Success(user)
         } catch (e: FirebaseAuthInvalidUserException) {
             Log.e(TAG, "SignInWithCredential error.", e)
-            Failure(AuthErrors.ERROR_USER_NOT_FOUND)
+            Failure(AuthErrors.ERROR_WRONG_CREDENTIALS)
         } catch (e: FirebaseAuthInvalidCredentialsException) {
             Log.e(TAG, "SignInWithCredential error.", e)
             Failure(AuthErrors.ERROR_WRONG_CREDENTIALS)
@@ -97,7 +99,7 @@ class AuthRepositoryImpl @Inject constructor(
             AuthResult.Success(user)
         } catch (e: FirebaseNetworkException) {
             Log.e(TAG, "Network exception.", e)
-            Failure(AuthErrors.ERROR_NETWORK)
+            Failure(AuthErrors.NETWORK_ERROR)
         } catch (e: FirebaseException) {
             Log.e(TAG, "Wrong credentials.", e)
             Failure(AuthErrors.ERROR_WRONG_CREDENTIALS)

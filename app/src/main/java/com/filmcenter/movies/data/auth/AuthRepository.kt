@@ -7,7 +7,7 @@ import com.google.firebase.auth.FirebaseUser
 interface AuthRepository {
     val isUserAuthenticated: Boolean
 
-    suspend fun oneTapSignInWithGoogle(): IntentSender?
+    suspend fun oneTapSignInWithGoogle(): AuthResult<IntentSender?>
 
     suspend fun firebaseSignInWithGoogle(intent: Intent): AuthResult<FirebaseUser>
     suspend fun signUpUserWithEmailAndPassword(email:String,password:String) : AuthResult<FirebaseUser>

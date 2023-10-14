@@ -9,7 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.filmcenter.movies.data.auth.AuthErrors
 import com.filmcenter.movies.data.auth.AuthResult
 import com.filmcenter.movies.data.auth.AuthRepository
-import com.filmcenter.movies.presentation.auth.model.AuthError
+import com.filmcenter.movies.presentation.auth.Constants.EMAIL_REGEX
+import com.filmcenter.movies.presentation.auth.Constants.PASSWORD_REGEX
 import com.filmcenter.movies.presentation.auth.model.RegisterUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -51,27 +52,7 @@ class RegisterViewModel @Inject constructor(
             if (signUpResult is AuthResult.Success) {
                 uiState = uiState.copy(isRegistrationSuccessful = true)
             } else if (signUpResult is AuthResult.Failure) {
-                Log.d("tag", "${signUpResult.signInError}")
-                when (signUpResult.signInError) {
-                    AuthErrors.ERROR_NETWORK -> {
-                        uiState =
-                            uiState.copy(
-                                errorState = AuthError.InternetConnectionErr,
-                                isLoading = false
-                            )
-                    }
-                    AuthErrors.ERROR_USER_ALREADY_EXIST -> {
-                        uiState =
-                            uiState.copy(
-                                errorState = AuthError.UserAlreadyExist,
-                                isLoading = false
-                            )
-                    }
-                    else -> {
-                        uiState =
-                            uiState.copy(errorState = AuthError.UnknownError, isLoading = false)
-                    }
-                }
+                uiState = uiState.copy(errorState = signUpResult.error, isLoading = false)
             }
         }
     }
@@ -80,13 +61,11 @@ class RegisterViewModel @Inject constructor(
         email: String,
         password: String,
         confirmPassword: String
-    ): AuthError? {
-        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
-        val passwordRegex = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,19}$"
+    ): AuthErrors? {
         return when {
-            !email.matches(emailRegex.toRegex()) -> AuthError.InvalidEmail
-            !password.matches(passwordRegex.toRegex()) -> AuthError.InvalidPassword
-            confirmPassword != password -> AuthError.PasswordsDoesntMatch
+            !email.matches(EMAIL_REGEX.toRegex()) -> AuthErrors.INVALID_EMAIL
+            !password.matches(PASSWORD_REGEX.toRegex()) -> AuthErrors.INVALID_PASSWORD
+            confirmPassword != password -> AuthErrors.PASSWORDS_DONT_MATCH
             else -> null
         }
     }

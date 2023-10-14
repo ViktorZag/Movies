@@ -15,7 +15,7 @@ firebase-auth_version = "22.1.2"
 coil_version = "2.4.0"
 retrofit_version = "2.9.0"
 okhttp_version = "4.11.0"
-gson_version = "2.10"
+moshi_version = "1.13.0"
 hilt_version = "2.44"
 hilt-compose_version = "1.0.0"
 datastore_version = "1.0.0"
@@ -60,9 +60,11 @@ gms-play-services-auth = { group = "com.google.android.gms", name = "play-servic
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil_version" }
 #Retrofit
 retrofit_core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit_version" }
-retrofit_converter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit_version" }
-retrofit_gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson_version" }
+retrofit_converter = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit_version" }
+moshi = {group = "com.squareup.moshi",name = "moshi", version.ref = "moshi_version"}
+moshi_codegen = {group = "com.squareup.moshi",name = "moshi-kotlin-codegen", version.ref = "moshi_version"}
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp_version" }
+okhttp_login_interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor",version.ref = "okhttp_version" }
 #Di
 hilt_android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt_version" }
 hilt_compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt_version" }

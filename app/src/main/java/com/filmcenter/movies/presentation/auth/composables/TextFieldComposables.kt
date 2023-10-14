@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.filmcenter.movies.presentation.auth.model.AuthError
+import com.filmcenter.movies.data.auth.AuthErrors
 
 @OptIn(
     ExperimentalComposeUiApi::class,
@@ -34,7 +34,7 @@ fun PasswordTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
-    error: AuthError? = null,
+    error: AuthErrors? = null,
     enabled: Boolean = true,
     imeAction: ImeAction = ImeAction.Done
 ) {
@@ -75,7 +75,7 @@ fun PasswordTextField(
         enabled = enabled,
         isError = error != null,
         supportingText = {
-            if (error == AuthError.InvalidPassword) {
+            if (error == AuthErrors.INVALID_PASSWORD) {
                 ErrorTextInputField(text = stringResource(id = error.message))
             }
         }
@@ -88,7 +88,7 @@ fun EmailTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
-    error: AuthError? = null,
+    error: AuthErrors? = null,
     enabled: Boolean = true,
     imeAction: ImeAction = ImeAction.Next
 ) {
@@ -108,7 +108,7 @@ fun EmailTextField(
         enabled = enabled,
         isError = error != null,
         supportingText = {
-            if (error == AuthError.InvalidEmail) {
+            if (error == AuthErrors.INVALID_EMAIL) {
                 ErrorTextInputField(text = stringResource(id = error.message))
             }
         }

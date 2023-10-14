@@ -5,14 +5,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.togetherWith
-import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,7 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -38,11 +31,9 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -55,14 +46,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.filmcenter.movies.R
+import com.filmcenter.movies.data.auth.AuthErrors
 import com.filmcenter.movies.presentation.auth.composables.DividerTextComponent
 import com.filmcenter.movies.presentation.auth.composables.LoginInputs
+import com.filmcenter.movies.presentation.auth.composables.NormalButton
 import com.filmcenter.movies.presentation.auth.composables.SignInButton
 import com.filmcenter.movies.presentation.auth.composables.TitleText
-import com.filmcenter.movies.presentation.auth.model.AuthError
 import com.filmcenter.movies.presentation.theme.MoviesTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -70,10 +60,12 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     onNavigateToRegistration: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
-    onNavigateToAuthenticatedRoute: () -> Unit
+    onNavigateToAuthenticatedRoute: () -> Unit,
+    onNavigateToMain:() -> Unit
 ) {
 
     val uiState = viewModel.uiState
+    val googleIntentSender = viewModel.googleLoginIntentSender
 
     val launcher =
         rememberLauncherForActivityResult(
@@ -86,7 +78,11 @@ fun LoginScreen(
                     )
                 }
             })
-
+    LaunchedEffect(googleIntentSender) {
+        if (googleIntentSender != null) {
+            launcher.launch(IntentSenderRequest.Builder(googleIntentSender).build())
+        }
+    }
     if (uiState.isLoginSuccessful) {
         LaunchedEffect(Unit) {
             onNavigateToAuthenticatedRoute.invoke()
@@ -169,24 +165,23 @@ fun LoginScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
-                DividerTextComponent(modifier = Modifier.padding(horizontal = MoviesTheme.dimens.paddingLarge))
-                Spacer(modifier = Modifier.height(MoviesTheme.dimens.paddingExtraSmall))
-                val coroutineScope = rememberCoroutineScope()
-                SignInButton(
-                    modifier = Modifier
-                        .size(MoviesTheme.dimens.minButtonSize),
-                    icon = painterResource(id = R.drawable.ic_google_logo),
-                    onClick = {
-                        coroutineScope.launch {
-                            val signInIntentSender = viewModel.logInWithGoogle()
-                            Log.d("tag", "signInIntentSender $signInIntentSender")
-                            launcher.launch(
-                                IntentSenderRequest.Builder(
-                                    signInIntentSender ?: return@launch
-                                ).build()
-                            )
-                        }
-                    })
+                if (!uiState.isOneTapSignInDeclined) {
+                    DividerTextComponent(modifier = Modifier.padding(horizontal = MoviesTheme.dimens.paddingLarge))
+                    Spacer(modifier = Modifier.height(MoviesTheme.dimens.paddingExtraSmall))
+                    val coroutineScope = rememberCoroutineScope()
+                    SignInButton(
+                        modifier = Modifier
+                            .size(MoviesTheme.dimens.minButtonSize),
+                        icon = painterResource(id = R.drawable.ic_google_logo),
+                        enabled = !uiState.isLoading,
+                        onClick = { viewModel.onGoogleLoginClick() })
+                }
+                NormalButton(
+                    modifier = Modifier.padding(top = MoviesTheme.dimens.paddingSmall),
+                    text = "Main",
+                    enabled = !uiState.isLoading,
+                    onClick = {onNavigateToMain()}
+                )
             }
             val snackbarHostState = remember { SnackbarHostState() }
             SnackbarHost(
@@ -212,9 +207,10 @@ fun LoginScreen(
             )
             LaunchedEffect(uiState.errorState) {
                 if (
-                    uiState.errorState == AuthError.WrongCredentials ||
-                    uiState.errorState == AuthError.InternetConnectionErr ||
-                    uiState.errorState == AuthError.UnknownError
+                    uiState.errorState == AuthErrors.ERROR_WRONG_CREDENTIALS ||
+                    uiState.errorState == AuthErrors.NETWORK_ERROR ||
+                    uiState.errorState == AuthErrors.ONE_TAP_SIGNIN_DECLINED_ERROR ||
+                    uiState.errorState == AuthErrors.UNKNOWN_ERROR
                 ) {
                     snackbarHostState.showSnackbar(
                         "Error message",
@@ -243,7 +239,8 @@ fun PreviewLoginScreen() {
         LoginScreen(
             onNavigateToForgotPassword = {},
             onNavigateToRegistration = {},
-            onNavigateToAuthenticatedRoute = {}
+            onNavigateToAuthenticatedRoute = {},
+            onNavigateToMain = {}
         )
     }
 }

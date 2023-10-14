@@ -30,10 +30,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.filmcenter.movies.R
+import com.filmcenter.movies.data.auth.AuthErrors
 import com.filmcenter.movies.presentation.auth.composables.ProgressIndicator
 import com.filmcenter.movies.presentation.auth.composables.RegistrationInputs
 import com.filmcenter.movies.presentation.auth.composables.TitleText
-import com.filmcenter.movies.presentation.auth.model.AuthError
 import com.filmcenter.movies.presentation.theme.MoviesTheme
 import kotlinx.coroutines.delay
 
@@ -134,10 +134,10 @@ fun RegistrationScreen(
         )
         LaunchedEffect(uiState.errorState) {
             if (
-                uiState.errorState == AuthError.WrongCredentials ||
-                uiState.errorState == AuthError.UserAlreadyExist ||
-                uiState.errorState == AuthError.InternetConnectionErr ||
-                uiState.errorState == AuthError.UnknownError
+                uiState.errorState == AuthErrors.ERROR_WRONG_CREDENTIALS ||
+                uiState.errorState == AuthErrors.ERROR_USER_ALREADY_EXIST ||
+                uiState.errorState == AuthErrors.NETWORK_ERROR ||
+                uiState.errorState == AuthErrors.UNKNOWN_ERROR
             ) {
                 snackbarHostState.showSnackbar(
                     "Error message",

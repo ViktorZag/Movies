@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.filmcenter.movies.data.auth.AuthErrors
 import com.filmcenter.movies.data.auth.AuthResult
 import com.filmcenter.movies.data.auth.AuthRepository
-import com.filmcenter.movies.presentation.auth.model.AuthError
 import com.filmcenter.movies.presentation.auth.model.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -23,13 +22,29 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
     var uiState by mutableStateOf(LoginUiState(isLoginSuccessful = false /*authRepository.isUserAuthenticated*/))
         private set
+    var googleLoginIntentSender by mutableStateOf<IntentSender?>(null)
 
     fun updateUiState(email: String, password: String) {
         uiState = uiState.copy(email, password, null)
     }
 
-    suspend fun logInWithGoogle(): IntentSender? {
-        return authRepository.oneTapSignInWithGoogle()
+    fun onGoogleLoginClick() {
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true)
+            val result = authRepository.oneTapSignInWithGoogle()
+            when (result) {
+                is AuthResult.Success -> {
+                    googleLoginIntentSender = result.data
+                    uiState = uiState.copy(isLoading = false)
+                }
+                is AuthResult.Failure ->
+                    uiState = uiState.copy(
+                        isOneTapSignInDeclined = result.error == AuthErrors.ONE_TAP_SIGNIN_DECLINED_ERROR,
+                        errorState = result.error,
+                        isLoading = false
+                    )
+            }
+        }
     }
 
     fun logInWithIntent(intent: Intent) {
@@ -39,8 +54,8 @@ class LoginViewModel @Inject constructor(
             if (result is AuthResult.Success && result.data != null) {
                 uiState = uiState.copy(isLoginSuccessful = true)
             } else if (result is AuthResult.Failure) {
-
-                Log.d("tag", "Exception ${result.signInError}")
+                uiState = uiState.copy(errorState = result.error, isLoading = false)
+                Log.d("tag", "Exception ${result.error}")
             }
         }
     }
@@ -55,44 +70,16 @@ class LoginViewModel @Inject constructor(
             if (result is AuthResult.Success) {
                 uiState = uiState.copy(isLoginSuccessful = true, isLoading = false)
             } else if (result is AuthResult.Failure) {
-                Log.d("tag", "${result.signInError}")
-                when (result.signInError) {
-                    AuthErrors.ERROR_USER_NOT_FOUND -> {
-                        uiState =
-                            uiState.copy(errorState = AuthError.WrongCredentials, isLoading = false)
-                    }
-
-                    AuthErrors.ERROR_NETWORK -> {
-                        uiState =
-                            uiState.copy(
-                                errorState = AuthError.InternetConnectionErr,
-                                isLoading = false
-                            )
-                    }
-
-                    AuthErrors.ERROR_WRONG_CREDENTIALS -> {
-                        uiState =
-                            uiState.copy(
-                                errorState = AuthError.WrongCredentials,
-                                isLoading = false
-                            )
-                    }
-
-                    else -> {
-                        uiState =
-                            uiState.copy(errorState = AuthError.UnknownError, isLoading = false)
-                    }
-                }
+                uiState =
+                    uiState.copy(errorState = result.error, isLoading = false)
             }
         }
     }
 
-    private fun validateInputs(email: String, password: String): AuthError? {
-        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
-        val passwordRegex = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,19}$"
+    private fun validateInputs(email: String, password: String): AuthErrors? {
         return when {
-            !email.matches(emailRegex.toRegex()) -> AuthError.InvalidEmail
-            !password.matches(passwordRegex.toRegex()) -> AuthError.InvalidPassword
+            !email.matches(Constants.EMAIL_REGEX.toRegex()) -> AuthErrors.INVALID_EMAIL
+            !password.matches(Constants.PASSWORD_REGEX.toRegex()) -> AuthErrors.INVALID_PASSWORD
             else -> null
         }
     }

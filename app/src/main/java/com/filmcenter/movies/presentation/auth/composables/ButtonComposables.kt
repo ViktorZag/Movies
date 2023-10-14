@@ -57,7 +57,7 @@ fun NormalButton(
 fun SignInButton(
     modifier: Modifier = Modifier,
     icon: Painter,
-    isLoading: Boolean = false,
+    enabled: Boolean = true,
     shape: Shape = MaterialTheme.shapes.medium,
     borderColor: Color = MaterialTheme.colorScheme.outline,
     backgroundColor: Color = Color.Transparent,
@@ -65,7 +65,7 @@ fun SignInButton(
 ) {
     Surface(
         modifier = modifier.clickable(
-            enabled = !isLoading,
+            enabled = enabled,
             onClick = onClick
         ),
         shape = shape,
